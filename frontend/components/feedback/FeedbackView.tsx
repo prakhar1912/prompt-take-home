@@ -22,10 +22,6 @@ const styles = {
   },
 }
 
-const SubmitFeedbackButton = (props) => {
-  return <Button type="primary">Submit Feedback</Button>
-}
-
 export const FeedbackView = () => {
   const { pk: essayId }: { pk: string } = useParams()
   const selectedEssay = useSelector(getEssayByPk(Number(essayId)))
@@ -37,9 +33,19 @@ export const FeedbackView = () => {
     setFeedback(inputFeedback)
   }
 
+  const saveFeedback = () => {}
+
   return (
     <>
-      <PageHeader ghost={false} title={selectedEssay.name} extra={[<SubmitFeedbackButton key="submit-feedback" />]} />
+      <PageHeader
+        ghost={false}
+        title={selectedEssay.name}
+        extra={[
+          <Button type="primary" key="submit-feedback" onClick={saveFeedback}>
+            Submit Feedback
+          </Button>,
+        ]}
+      />
       <Card title="Previous Feedback" style={styles.feedbackContainer} />
       <Card style={styles.feedbackContainer}>
         <Row>
