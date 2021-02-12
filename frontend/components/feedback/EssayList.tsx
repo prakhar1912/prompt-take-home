@@ -1,10 +1,19 @@
-import { Card, List, message, PageHeader, Spin } from 'antd'
+import { Card, List, message, PageHeader, Spin, Button } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { getEssays, selectOrderedFeedbackRequests } from 'store/feedback/feedbackSelector'
 import { loadFeedbackRequests } from 'store/feedback/feedbackThunks'
 import { FeedbackRequest } from 'store/feedback/feedbackTypes'
 import { useReduxDispatch } from 'store/store'
+import { Urls } from 'store/urls'
+
+const ProvideFeedbackButton = ({ essayId }: { essayId: number }) => {
+  return (
+    <Button type="primary" href={Urls.FeedbackView(essayId)}>
+      Provide Feedback
+    </Button>
+  )
+}
 
 export const EssayList = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -13,7 +22,7 @@ export const EssayList = () => {
   const essays = useSelector(getEssays)
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       setIsLoading(true)
       try {
         await dispatch(loadFeedbackRequests())
@@ -38,13 +47,14 @@ export const EssayList = () => {
         itemLayout="horizontal"
         dataSource={feedbackRequests}
         renderItem={(item: FeedbackRequest) => {
-          const essay = essays[item.essay]
+          const { pk, name } = essays[item.essay]
           return (
-            <List.Item>
-              <List.Item.Meta title={essay.name} />
+            <List.Item actions={[<ProvideFeedbackButton essayId={pk} key={`go-to-feedback-${pk}`} />]}>
+              <List.Item.Meta title={name} />
             </List.Item>
           )
-        }} />
+        }}
+      />
     )
   }
 
@@ -54,5 +64,4 @@ export const EssayList = () => {
       <Card>{renderContent()}</Card>
     </>
   )
-
 }

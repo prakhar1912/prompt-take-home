@@ -6,6 +6,7 @@ import 'style/global.scss'
 import 'style/antd/customAntd.less'
 import { Layout } from 'antd'
 import { EssayList } from 'components/feedback/EssayList'
+import { FeedbackView } from 'components/feedback/FeedbackView'
 import { Route, Router, Switch } from 'react-router-dom'
 import { createHashHistory } from 'history'
 import { logoutUser } from 'store/user/userThunks'
@@ -47,6 +48,8 @@ const App = () => {
         <Router history={history}>
           <Switch>
             <Route path="/" exact component={EssayList} />
+            <Route path="/feedback/:pk/view" exact component={FeedbackView} />
+            {/* <Route path="/feedback/:pk/history" exact component={FeedbackList} /> */}
           </Switch>
         </Router>
       </Layout.Content>
