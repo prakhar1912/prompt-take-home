@@ -7,15 +7,8 @@ import { FeedbackRequest } from 'store/feedback/feedbackTypes'
 import { useReduxDispatch } from 'store/store'
 import { Urls } from 'store/urls'
 
-const ProvideFeedbackButton = ({ essayId }: { essayId: number }) => {
-  return (
-    <Button type="primary" href={Urls.FeedbackView(essayId)}>
-      Provide Feedback
-    </Button>
-  )
-}
-
-export const EssayList = () => {
+// TODO: Define type for props
+export const EssayList = ({ history }) => {
   const [isLoading, setIsLoading] = useState(false)
   const dispatch = useReduxDispatch()
   const feedbackRequests = useSelector(selectOrderedFeedbackRequests)
@@ -34,6 +27,8 @@ export const EssayList = () => {
     })()
   }, [dispatch])
 
+  const goToFeedbackView = (essayId: number) => () => history.push(Urls.FeedbackView(essayId))
+
   const renderContent = () => {
     if (isLoading) {
       return (
@@ -49,7 +44,13 @@ export const EssayList = () => {
         renderItem={(item: FeedbackRequest) => {
           const { pk, name } = essays[item.essay]
           return (
-            <List.Item actions={[<ProvideFeedbackButton essayId={pk} key={`go-to-feedback-${pk}`} />]}>
+            <List.Item
+              actions={[
+                <Button type="primary" onClick={goToFeedbackView(pk)} key={`go-to-feedback-${pk}`}>
+                  Submit Feedback
+                </Button>,
+              ]}
+            >
               <List.Item.Meta title={name} />
             </List.Item>
           )
