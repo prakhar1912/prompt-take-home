@@ -42,6 +42,7 @@ export const FeedbackView = () => {
   const submitFeedback = async () => {
     try {
       await dispatch(submitFeedbackOnEssay(feedbackResponse.pk))
+      window.location.href = '/platform/'
     } catch (err) {
       message.error('Something went wrong while submitting feedback')
     }

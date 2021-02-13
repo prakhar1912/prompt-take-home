@@ -35,10 +35,12 @@ export const loadFeedbackRequests = () => async (dispatch: Dispatch) => {
   }
 }
 
-export const loadFeedbackResponse = () => async (dispatch: Dispatch) => {
+export const loadUnfinishedFeedbackResponse = () => async (dispatch: Dispatch) => {
   // eslint-disable-next-line no-useless-catch
   try {
-    const { data: feedbackResponse }: { data: FeedbackResponse[] } = await API.get(Urls.FeedbackResponse())
+    const { data: feedbackResponse }: { data: FeedbackResponse[] } = await API.get(Urls.FeedbackResponse(), {
+      params: { only_unfinished: true },
+    })
     feedbackResponse.forEach(feedbackResponse => {
       const {
         feedback_request: { pk: feedbackRequestId },

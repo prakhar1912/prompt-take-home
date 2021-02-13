@@ -6,7 +6,11 @@ import {
   selectOrderedFeedbackRequests,
   getFeedbackRequestIdInProgress,
 } from 'store/feedback/feedbackSelector'
-import { loadFeedbackRequests, loadFeedbackResponse, startFeedbackResponse } from 'store/feedback/feedbackThunks'
+import {
+  loadFeedbackRequests,
+  loadUnfinishedFeedbackResponse,
+  startFeedbackResponse,
+} from 'store/feedback/feedbackThunks'
 import { FeedbackRequest } from 'store/feedback/feedbackTypes'
 import { useReduxDispatch } from 'store/store'
 import { Urls } from 'store/urls'
@@ -24,7 +28,7 @@ export const EssayList = ({ history }) => {
       setIsLoading(true)
       try {
         await dispatch(loadFeedbackRequests())
-        await dispatch(loadFeedbackResponse())
+        await dispatch(loadUnfinishedFeedbackResponse())
         setIsLoading(false)
       } catch (err) {
         setIsLoading(false)
@@ -60,6 +64,8 @@ export const EssayList = ({ history }) => {
         renderItem={(item: FeedbackRequest) => {
           const { pk: feedbackRequestPk, essay: essayPk } = item
           const { name } = essays[essayPk]
+          const buttonDisabled = Boolean(feedbackRequestInProgress) && feedbackRequestInProgress !== feedbackRequestPk
+          const canGoToFeedback = feedbackRequestInProgress === feedbackRequestPk
           return (
             <List.Item
               actions={[
@@ -67,9 +73,9 @@ export const EssayList = ({ history }) => {
                   type="primary"
                   onClick={goToFeedbackView(feedbackRequestPk)}
                   key={`go-to-feedback-${feedbackRequestPk}`}
-                  disabled={feedbackRequestInProgress !== feedbackRequestPk}
+                  disabled={buttonDisabled}
                 >
-                  {feedbackRequestInProgress === feedbackRequestPk ? 'Go To Feedback' : 'Accept Request'}
+                  {canGoToFeedback ? 'Go To Feedback' : 'Accept Request'}
                 </Button>,
               ]}
             >
