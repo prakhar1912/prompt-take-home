@@ -3,5 +3,6 @@ export const Urls = {
   Logout: () => '/logout/',
   User: () => '/api/user/',
   FeedbackRequest: () => '/api/feedback-request/',
-  FeedbackView: (essayId: number) => `/feedback/${essayId}/view`,
+  FeedbackView: (feedbackRequestId: number) => `/feedback/${feedbackRequestId}/view`,
+  StartFeedbackResponse: (feedbackRequestId: number) => `/api/feedback-request/${feedbackRequestId}/start-response/`,
 }

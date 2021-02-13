@@ -2,7 +2,7 @@ import React, { useState, ChangeEvent } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { PageHeader, Button, Card, Row, Col, Input } from 'antd'
-import { getEssayByPk } from 'store/feedback/feedbackSelector'
+import { getEssayByFeedbackPk } from 'store/feedback/feedbackSelector'
 
 const styles = {
   feedbackContainer: {
@@ -23,8 +23,8 @@ const styles = {
 }
 
 export const FeedbackView = () => {
-  const { pk: essayId }: { pk: string } = useParams()
-  const selectedEssay = useSelector(getEssayByPk(Number(essayId)))
+  const { pk: feedbackRequestPk }: { pk: string } = useParams()
+  const selectedEssay = useSelector(getEssayByFeedbackPk(Number(feedbackRequestPk)))
 
   const [feedback, setFeedback] = useState('')
 

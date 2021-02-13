@@ -28,3 +28,12 @@ export const loadFeedbackRequests = () => async (dispatch: Dispatch) => {
     throw err
   }
 }
+
+export const startFeedbackResponse = (feedbackRequestId: number) => async () => {
+  // eslint-disable-next-line no-useless-catch
+  try {
+    await API.post(Urls.StartFeedbackResponse(feedbackRequestId))
+  } catch (err) {
+    throw err
+  }
+}
