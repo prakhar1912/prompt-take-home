@@ -19,7 +19,7 @@ import { Urls } from 'store/urls'
 export const EssayList = ({ history }) => {
   const [isLoading, setIsLoading] = useState(false)
   const dispatch = useReduxDispatch()
-  const feedbackRequests = useSelector(selectOrderedFeedbackRequests)
+  let feedbackRequests = useSelector(selectOrderedFeedbackRequests)
   const feedbackRequestInProgress = useSelector(getFeedbackRequestIdInProgress)
   const essays = useSelector(getEssays)
 
@@ -47,6 +47,10 @@ export const EssayList = ({ history }) => {
       }
     }
     history.push(Urls.FeedbackView(feedbackRequestId))
+  }
+
+  if (feedbackRequestInProgress) {
+    feedbackRequests = feedbackRequests.filter(({ pk }) => pk === feedbackRequestInProgress)
   }
 
   const renderContent = () => {
