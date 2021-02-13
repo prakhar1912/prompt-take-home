@@ -56,8 +56,11 @@ export const loadUnfinishedFeedbackResponse = () => async (dispatch: Dispatch) =
 export const startFeedbackResponse = (feedbackRequestId: number) => async (dispatch: Dispatch) => {
   // eslint-disable-next-line no-useless-catch
   try {
-    await API.post(Urls.StartFeedbackResponse(feedbackRequestId))
+    const { data: feedbackResponse }: { data: FeedbackResponse } = await API.post(
+      Urls.StartFeedbackResponse(feedbackRequestId)
+    )
     dispatch(addFeedbackRequestIdToInProgress(feedbackRequestId))
+    dispatch(addFeedbackResponseToInProgress(feedbackResponse))
   } catch (err) {
     throw err
   }
