@@ -4,7 +4,8 @@ import { Urls } from 'store/urls'
 import {
   addEssays,
   addFeedbackRequests,
-  addFeedbackRequestToInProgress,
+  addFeedbackRequestIdToInProgress,
+  removeFeedbackRequestIdFromInProgress,
   addFeedbackResponseToInProgress,
 } from './feedbackSlice'
 import { Essay, FeedbackRequest, FeedbackResponse } from './feedbackTypes'
@@ -34,13 +35,16 @@ export const loadFeedbackRequests = () => async (dispatch: Dispatch) => {
   }
 }
 
-export const loadFeedbackResponses = () => async (dispatch: Dispatch) => {
+export const loadFeedbackResponse = () => async (dispatch: Dispatch) => {
   // eslint-disable-next-line no-useless-catch
   try {
     const { data: feedbackResponse }: { data: FeedbackResponse[] } = await API.get(Urls.FeedbackResponse())
-    feedbackResponse.forEach(({ pk: feedbackResponseId, feedback_request: { pk: feedbackRequestId } }) => {
-      dispatch(addFeedbackRequestToInProgress(feedbackRequestId))
-      dispatch(addFeedbackResponseToInProgress(feedbackResponseId))
+    feedbackResponse.forEach(feedbackResponse => {
+      const {
+        feedback_request: { pk: feedbackRequestId },
+      } = feedbackResponse
+      dispatch(addFeedbackRequestIdToInProgress(feedbackRequestId))
+      dispatch(addFeedbackResponseToInProgress(feedbackResponse))
     })
   } catch (err) {
     throw err
@@ -51,14 +55,30 @@ export const startFeedbackResponse = (feedbackRequestId: number) => async (dispa
   // eslint-disable-next-line no-useless-catch
   try {
     await API.post(Urls.StartFeedbackResponse(feedbackRequestId))
-    dispatch(addFeedbackRequestToInProgress(feedbackRequestId))
+    dispatch(addFeedbackRequestIdToInProgress(feedbackRequestId))
   } catch (err) {
     throw err
   }
 }
 
-// export const saveFeedbackOnEssay = (feedbackResponseId: number, feedback: string) => async () => {
-//   try {
-//     await API.put(Urls.SaveFeedbackOnEssay(feedbackResponseId))
-//   }
-// }
+export const saveFeedbackOnEssay = (feedbackResponseId: number, feedbackResponse: FeedbackResponse) => async (
+  dispatch: Dispatch,
+) => {
+  // eslint-disable-next-line no-useless-catch
+  try {
+    await API.put(Urls.SaveFeedbackOnEssay(feedbackResponseId), feedbackResponse)
+    dispatch(addFeedbackResponseToInProgress(feedbackResponse))
+  } catch (err) {
+    throw err
+  }
+}
+
+export const submitFeedbackOnEssay = (feedbackResponseId: number) => async (dispatch: Dispatch) => {
+  // eslint-disable-next-line no-useless-catch
+  try {
+    await API.post(Urls.SubmitFeedbackOnEssay(feedbackResponseId))
+    dispatch(removeFeedbackRequestIdFromInProgress)
+  } catch (err) {
+    throw err
+  }
+}

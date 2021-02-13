@@ -29,6 +29,6 @@ export type FeedbackState = {
   essays: {
     [pk: number]: Essay
   }
-  feedbackRequestInProgress: number | null
-  feedbackResponseInProgress: number | null
+  feedbackRequestIdInProgress: number | null
+  feedbackResponseInProgress: FeedbackResponse
 }

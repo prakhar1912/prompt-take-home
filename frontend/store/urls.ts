@@ -7,4 +7,5 @@ export const Urls = {
   FeedbackResponse: () => '/api/feedback-response/',
   StartFeedbackResponse: (feedbackRequestId: number) => `/api/feedback-request/${feedbackRequestId}/start-response/`,
   SaveFeedbackOnEssay: (feedbackResponseId: number) => `/api/feedback-response/${feedbackResponseId}/`,
+  SubmitFeedbackOnEssay: (feedbackResponseId: number) => `/api/feedback-response/${feedbackResponseId}/finish/`,
 }

@@ -1,8 +1,10 @@
-import React, { useState, ChangeEvent } from 'react'
+import React, { FocusEvent } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { PageHeader, Button, Card, Row, Col, Input } from 'antd'
-import { getEssayByFeedbackPk } from 'store/feedback/feedbackSelector'
+import { PageHeader, Button, Card, Row, Col, Input, message } from 'antd'
+import { useReduxDispatch } from 'store/store'
+import { getEssayByFeedbackPk, getFeedbackResponseInProgress } from 'store/feedback/feedbackSelector'
+import { saveFeedbackOnEssay, submitFeedbackOnEssay } from 'store/feedback/feedbackThunks'
 
 const styles = {
   feedbackContainer: {
@@ -23,17 +25,27 @@ const styles = {
 }
 
 export const FeedbackView = () => {
+  const dispatch = useReduxDispatch()
   const { pk: feedbackRequestPk }: { pk: string } = useParams()
   const selectedEssay = useSelector(getEssayByFeedbackPk(Number(feedbackRequestPk)))
+  const feedbackResponse = useSelector(getFeedbackResponseInProgress)
 
-  const [feedback, setFeedback] = useState('')
-
-  const getFeedback = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    const inputFeedback = event.target.value
-    setFeedback(inputFeedback)
+  const saveFeedback = async (event: FocusEvent<HTMLTextAreaElement>) => {
+    const content = event.target.value
+    try {
+      await dispatch(saveFeedbackOnEssay(feedbackResponse.pk, { ...feedbackResponse, content }))
+    } catch (err) {
+      message.error('Something went wrong while saving feedback')
+    }
   }
 
-  const saveFeedback = () => {}
+  const submitFeedback = async () => {
+    try {
+      await dispatch(submitFeedbackOnEssay(feedbackResponse.pk))
+    } catch (err) {
+      message.error('Something went wrong while submitting feedback')
+    }
+  }
 
   return (
     <>
@@ -41,7 +53,7 @@ export const FeedbackView = () => {
         ghost={false}
         title={selectedEssay.name}
         extra={[
-          <Button type="primary" key="submit-feedback" onClick={saveFeedback}>
+          <Button type="primary" key="submit-feedback" onClick={submitFeedback}>
             Submit Feedback
           </Button>,
         ]}
@@ -55,7 +67,7 @@ export const FeedbackView = () => {
           </Col>
           <Col span={12}>
             <h2 style={styles.newFeedbackHeading}>Your Feedback</h2>
-            <Input.TextArea placeholder="Textarea placeholder" onChange={getFeedback} />
+            <Input.TextArea placeholder="Textarea placeholder" onBlur={saveFeedback} />
           </Col>
         </Row>
       </Card>

@@ -6,7 +6,7 @@ import {
   selectOrderedFeedbackRequests,
   getFeedbackRequestIdInProgress,
 } from 'store/feedback/feedbackSelector'
-import { loadFeedbackRequests, loadFeedbackResponses, startFeedbackResponse } from 'store/feedback/feedbackThunks'
+import { loadFeedbackRequests, loadFeedbackResponse, startFeedbackResponse } from 'store/feedback/feedbackThunks'
 import { FeedbackRequest } from 'store/feedback/feedbackTypes'
 import { useReduxDispatch } from 'store/store'
 import { Urls } from 'store/urls'
@@ -24,7 +24,7 @@ export const EssayList = ({ history }) => {
       setIsLoading(true)
       try {
         await dispatch(loadFeedbackRequests())
-        await dispatch(loadFeedbackResponses())
+        await dispatch(loadFeedbackResponse())
         setIsLoading(false)
       } catch (err) {
         setIsLoading(false)

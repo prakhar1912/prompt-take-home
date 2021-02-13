@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { map, zipObject } from 'lodash'
-import { Essay, FeedbackRequest, FeedbackState } from './feedbackTypes'
+import { Essay, FeedbackRequest, FeedbackResponse, FeedbackState } from './feedbackTypes'
 
 const initialState: FeedbackState = {
   feedbackRequests: {},
   essays: {},
-  feedbackRequestInProgress: null,
-  feedbackResponseInProgress: null,
+  feedbackRequestIdInProgress: null,
+  feedbackResponseInProgress: {} as FeedbackResponse,
 }
 
 const feedbackSlice = createSlice({
@@ -25,10 +25,13 @@ const feedbackSlice = createSlice({
     addFeedbackRequests(state, action: PayloadAction<FeedbackRequest[]>) {
       state.feedbackRequests = { ...state.feedbackRequests, ...zipObject(map(action.payload, 'pk'), action.payload) }
     },
-    addFeedbackRequestToInProgress(state, action: PayloadAction<number>) {
-      state.feedbackRequestInProgress = action.payload
+    addFeedbackRequestIdToInProgress(state, action: PayloadAction<number>) {
+      state.feedbackRequestIdInProgress = action.payload
     },
-    addFeedbackResponseToInProgress(state, action: PayloadAction<number>) {
+    removeFeedbackRequestIdFromInProgress(state) {
+      state.feedbackRequestIdInProgress = null
+    },
+    addFeedbackResponseToInProgress(state, action: PayloadAction<FeedbackResponse>) {
       state.feedbackResponseInProgress = action.payload
     },
   },
@@ -39,7 +42,8 @@ export const {
   addEssays,
   addFeedbackRequest,
   addFeedbackRequests,
-  addFeedbackRequestToInProgress,
+  addFeedbackRequestIdToInProgress,
+  removeFeedbackRequestIdFromInProgress,
   addFeedbackResponseToInProgress,
 } = feedbackSlice.actions
 export default feedbackSlice.reducer
