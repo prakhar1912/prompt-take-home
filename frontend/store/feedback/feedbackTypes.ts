@@ -14,7 +14,7 @@ export type FeedbackRequest = {
 
 export type FeedbackResponse = {
   pk: number
-  feedback_request: number
+  feedback_request: FeedbackRequest
   created: string // stores datetime
   finished: boolean // stores whether finished
   finish_time: string // stores datetime at which finished
@@ -29,4 +29,6 @@ export type FeedbackState = {
   essays: {
     [pk: number]: Essay
   }
+  feedbackRequestInProgress: number | null
+  feedbackResponseInProgress: number | null
 }

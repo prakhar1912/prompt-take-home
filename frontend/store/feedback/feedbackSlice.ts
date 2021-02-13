@@ -5,6 +5,8 @@ import { Essay, FeedbackRequest, FeedbackState } from './feedbackTypes'
 const initialState: FeedbackState = {
   feedbackRequests: {},
   essays: {},
+  feedbackRequestInProgress: null,
+  feedbackResponseInProgress: null,
 }
 
 const feedbackSlice = createSlice({
@@ -23,8 +25,21 @@ const feedbackSlice = createSlice({
     addFeedbackRequests(state, action: PayloadAction<FeedbackRequest[]>) {
       state.feedbackRequests = { ...state.feedbackRequests, ...zipObject(map(action.payload, 'pk'), action.payload) }
     },
+    addFeedbackRequestToInProgress(state, action: PayloadAction<number>) {
+      state.feedbackRequestInProgress = action.payload
+    },
+    addFeedbackResponseToInProgress(state, action: PayloadAction<number>) {
+      state.feedbackResponseInProgress = action.payload
+    },
   },
 })
 
-export const { addEssay, addEssays, addFeedbackRequest, addFeedbackRequests } = feedbackSlice.actions
+export const {
+  addEssay,
+  addEssays,
+  addFeedbackRequest,
+  addFeedbackRequests,
+  addFeedbackRequestToInProgress,
+  addFeedbackResponseToInProgress,
+} = feedbackSlice.actions
 export default feedbackSlice.reducer

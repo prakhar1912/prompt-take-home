@@ -1,8 +1,12 @@
 import { Card, List, message, PageHeader, Spin, Button } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { getEssays, selectOrderedFeedbackRequests } from 'store/feedback/feedbackSelector'
-import { loadFeedbackRequests, startFeedbackResponse } from 'store/feedback/feedbackThunks'
+import {
+  getEssays,
+  selectOrderedFeedbackRequests,
+  getFeedbackRequestIdInProgress,
+} from 'store/feedback/feedbackSelector'
+import { loadFeedbackRequests, loadFeedbackResponses, startFeedbackResponse } from 'store/feedback/feedbackThunks'
 import { FeedbackRequest } from 'store/feedback/feedbackTypes'
 import { useReduxDispatch } from 'store/store'
 import { Urls } from 'store/urls'
@@ -12,6 +16,7 @@ export const EssayList = ({ history }) => {
   const [isLoading, setIsLoading] = useState(false)
   const dispatch = useReduxDispatch()
   const feedbackRequests = useSelector(selectOrderedFeedbackRequests)
+  const feedbackRequestInProgress = useSelector(getFeedbackRequestIdInProgress)
   const essays = useSelector(getEssays)
 
   useEffect(() => {
@@ -19,6 +24,7 @@ export const EssayList = ({ history }) => {
       setIsLoading(true)
       try {
         await dispatch(loadFeedbackRequests())
+        await dispatch(loadFeedbackResponses())
         setIsLoading(false)
       } catch (err) {
         setIsLoading(false)
@@ -28,11 +34,13 @@ export const EssayList = ({ history }) => {
   }, [dispatch])
 
   const goToFeedbackView = (feedbackRequestId: number) => async () => {
-    try {
-      await dispatch(startFeedbackResponse(feedbackRequestId))
-    } catch (err) {
-      // TODO: show error from detail
-      return message.error('Failed to start feedback response')
+    if (feedbackRequestInProgress !== feedbackRequestId) {
+      try {
+        await dispatch(startFeedbackResponse(feedbackRequestId))
+      } catch (err) {
+        // TODO: show error from detail
+        return message.error('Failed to start feedback response')
+      }
     }
     history.push(Urls.FeedbackView(feedbackRequestId))
   }
@@ -59,6 +67,7 @@ export const EssayList = ({ history }) => {
                   type="primary"
                   onClick={goToFeedbackView(feedbackRequestPk)}
                   key={`go-to-feedback-${feedbackRequestPk}`}
+                  disabled={feedbackRequestInProgress !== feedbackRequestPk}
                 >
                   Submit Feedback
                 </Button>,

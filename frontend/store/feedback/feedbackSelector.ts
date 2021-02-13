@@ -13,7 +13,8 @@ export const getEssayByFeedbackPk = (feedbackRequestPk: number) => (state: RootS
   // TODO: Handle no feedback request
   return {} as Essay
 }
-
 export const selectOrderedFeedbackRequests = createSelector(getFeedbackRequests, feedbackRequests =>
   sortBy(values(feedbackRequests), ['deadline', 'name']),
 )
+export const getFeedbackRequestIdInProgress = (state: RootState) => state.feedback.feedbackRequestInProgress
+export const getFeedbackResponseIdInProgress = (state: RootState) => state.feedback.feedbackResponseInProgress
