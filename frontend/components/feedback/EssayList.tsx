@@ -69,7 +69,7 @@ export const EssayList = ({ history }) => {
                   key={`go-to-feedback-${feedbackRequestPk}`}
                   disabled={feedbackRequestInProgress !== feedbackRequestPk}
                 >
-                  Submit Feedback
+                  {feedbackRequestInProgress === feedbackRequestPk ? 'Go To Feedback' : 'Accept Request'}
                 </Button>,
               ]}
             >
