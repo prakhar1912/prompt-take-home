@@ -7,6 +7,7 @@ import {
   addFeedbackRequestIdToInProgress,
   removeFeedbackRequestIdFromInProgress,
   addFeedbackResponseToInProgress,
+  addFinishedFeedbackResponses,
 } from './feedbackSlice'
 import { Essay, FeedbackRequest, FeedbackResponse } from './feedbackTypes'
 
@@ -48,6 +49,18 @@ export const loadUnfinishedFeedbackResponse = () => async (dispatch: Dispatch) =
       dispatch(addFeedbackRequestIdToInProgress(feedbackRequestId))
       dispatch(addFeedbackResponseToInProgress(feedbackResponse))
     })
+  } catch (err) {
+    throw err
+  }
+}
+
+export const loadFinishedFeedbackResponses = () => async (dispatch: Dispatch) => {
+  // eslint-disable-next-line no-useless-catch
+  try {
+    const { data: feedbackResponses }: { data: FeedbackResponse[] } = await API.get(Urls.FeedbackResponse(), {
+      params: { only_finished: true },
+    })
+    dispatch(addFinishedFeedbackResponses(feedbackResponses))
   } catch (err) {
     throw err
   }

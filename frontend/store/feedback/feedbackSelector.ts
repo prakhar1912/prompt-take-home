@@ -18,3 +18,4 @@ export const selectOrderedFeedbackRequests = createSelector(getFeedbackRequests,
 )
 export const getFeedbackRequestIdInProgress = (state: RootState) => state.feedback.feedbackRequestIdInProgress
 export const getFeedbackResponseInProgress = (state: RootState) => state.feedback.feedbackResponseInProgress
+export const getFinishedFeedbackRequests = (state: RootState) => state.feedback.finishedFeedbackRequests

@@ -32,4 +32,5 @@ export type FeedbackState = {
   }
   feedbackRequestIdInProgress: number | null
   feedbackResponseInProgress: FeedbackResponse
+  finishedFeedbackRequests: FeedbackResponse[]
 }

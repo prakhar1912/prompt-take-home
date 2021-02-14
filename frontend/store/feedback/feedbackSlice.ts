@@ -34,6 +34,9 @@ const feedbackSlice = createSlice({
     addFeedbackResponseToInProgress(state, action: PayloadAction<FeedbackResponse>) {
       state.feedbackResponseInProgress = action.payload
     },
+    addFinishedFeedbackResponses(state, action: PayloadAction<FeedbackResponse[]>) {
+      state.finishedFeedbackRequests = action.payload
+    }
   },
 })
 
@@ -45,5 +48,6 @@ export const {
   addFeedbackRequestIdToInProgress,
   removeFeedbackRequestIdFromInProgress,
   addFeedbackResponseToInProgress,
+  addFinishedFeedbackResponses,
 } = feedbackSlice.actions
 export default feedbackSlice.reducer
