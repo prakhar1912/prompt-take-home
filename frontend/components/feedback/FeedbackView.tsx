@@ -26,6 +26,9 @@ const styles = {
   essayContent: {
     color: 'black',
   },
+  feedbackHistoryContainer: {
+    padding: '15px',
+  },
 }
 
 export const FeedbackView = () => {
@@ -82,12 +85,12 @@ export const FeedbackView = () => {
           <Collapse accordion>
             {feedbackResponseWithHistory.previous_revision_feedback.map(({ essay: { name, content, pk } }) => (
               <Collapse.Panel header={name} key={pk}>
-                <Row>
-                  <Col span={12}>
+                <Row style={styles.feedbackHistoryContainer}>
+                  <Col span={11}>
                     <h2 style={styles.newFeedbackHeading}>Essay</h2>
                     <p style={styles.essayContent}>{content}</p>
                   </Col>
-                  <Col span={12}>
+                  <Col span={11} offset={2}>
                     <h2 style={styles.newFeedbackHeading}>Feedback</h2>
                     <p></p>
                   </Col>
