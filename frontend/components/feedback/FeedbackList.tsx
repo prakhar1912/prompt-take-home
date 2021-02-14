@@ -1,5 +1,5 @@
 import React, { useEffect, useState, ChangeEvent } from 'react'
-import { PageHeader, Card, message, Table, Button, Modal, Input } from 'antd'
+import { PageHeader, Card, message, Table, Button, Modal, Row, Col, Input } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 import { useSelector } from 'react-redux'
 import { format, isAfter, isBefore } from 'date-fns'
@@ -106,7 +106,11 @@ export const FeedbackList = () => {
     <>
       <PageHeader ghost={false} title="Previous Feedback" />
       <Card style={styles.container}>
-        <Input placeholder="Search Feedback..." suffix={<SearchOutlined />} onChange={filterListBySearch} />
+        <Row>
+          <Col span={6} offset={18}>
+            <Input placeholder="Search Feedback..." suffix={<SearchOutlined />} onChange={filterListBySearch} />
+          </Col>
+        </Row>
       </Card>
       <Card style={styles.container}>
         <Table columns={feedbackListColumns} dataSource={tableData} pagination={{ defaultPageSize: 5 }} />
