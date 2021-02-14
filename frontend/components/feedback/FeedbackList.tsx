@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { PageHeader, Card, message, Table, Button, Modal } from 'antd'
 import { useSelector } from 'react-redux'
+import { format, isAfter, isBefore } from 'date-fns'
+import { ColumnsType } from 'antd/lib/table/interface'
 import { useReduxDispatch } from 'store/store'
 import { loadFinishedFeedbackResponses } from 'store/feedback/feedbackThunks'
 import { getFinishedFeedbackRequests } from 'store/feedback/feedbackSelector'
@@ -33,22 +35,36 @@ export const FeedbackList = () => {
     setModalStatus(false)
   }
 
-  const feedbackListColumns = [
+  const feedbackListColumns: ColumnsType<FeedbackListRecord> = [
     {
       title: 'Essay Name',
       dataIndex: 'essayName',
       key: 'essay-name',
+      sorter: ({ essayName: essayNameA }, { essayName: essayNameB }) => {
+        if (essayNameA < essayNameB) return -1
+        if (essayNameA > essayNameB) return 1
+        return 0
+      },
     },
     {
       title: 'Completed',
       dataIndex: 'completedOn',
       key: 'completed-on',
+      sorter: ({ completedOn: completedOnA }, { completedOn: completedOnB }) => {
+        const dateA = new Date(completedOnA)
+        const dateB = new Date(completedOnB)
+
+        if (isAfter(dateA, dateB)) return 1
+        if (isBefore(dateA, dateB)) return -1
+        return 0
+      },
+      render: (text, { completedOn }) => format(new Date(completedOn), 'MMMM d, yyyy KK:mm aa'),
     },
     {
       title: 'View Feedback',
       key: 'view-feedback',
       // eslint-disable-next-line react/display-name
-      render: ({ content }: FeedbackListRecord) => (
+      render: (text, { content }) => (
         <Button type="link" onClick={openContentModal(content)}>
           View
         </Button>

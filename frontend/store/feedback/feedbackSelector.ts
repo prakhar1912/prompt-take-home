@@ -27,8 +27,5 @@ export const getFinishedFeedbackRequests = (state: RootState) =>
       },
       finish_time,
       content,
-    }) => {
-      const completedOn = format(new Date(finish_time), 'MMMM d, yyyy KK:mm aa')
-      return { essayName, completedOn, content }
-    },
+    }) => ({ essayName, completedOn: finish_time, content }),
   )
