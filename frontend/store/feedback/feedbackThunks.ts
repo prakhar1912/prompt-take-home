@@ -11,26 +11,14 @@ import {
 } from './feedbackSlice'
 import { Essay, FeedbackRequest, FeedbackResponse } from './feedbackTypes'
 
-type FeedbackRequestRetrieve = Omit<FeedbackRequest, 'essay'> & {
-  essay: Essay
-}
-
 export const loadFeedbackRequests = () => async (dispatch: Dispatch) => {
   // eslint-disable-next-line no-useless-catch
   try {
-    const { data: frrs }: { data: FeedbackRequestRetrieve[] } = await API.get(Urls.FeedbackRequest())
-    const allFeedbackRequests: FeedbackRequest[] = []
-    const allEssays: Essay[] = []
-    frrs.forEach(frr => {
-      const { essay, ...frrDestructured } = frr
-      const feedbackRequest: Partial<FeedbackRequest> = { ...frrDestructured }
-      feedbackRequest.essay = essay.pk
-      allEssays.push(essay)
-      allFeedbackRequests.push(feedbackRequest as FeedbackRequest)
-    })
-    dispatch(addFeedbackRequests(allFeedbackRequests))
+    const { data: frrs }: { data: FeedbackRequest[] } = await API.get(Urls.FeedbackRequest())
+    const allEssays: Essay[] = frrs.map(({ essay }) => essay)
+    dispatch(addFeedbackRequests(frrs))
     dispatch(addEssays(allEssays))
-    return allFeedbackRequests
+    return frrs
   } catch (err) {
     throw err
   }

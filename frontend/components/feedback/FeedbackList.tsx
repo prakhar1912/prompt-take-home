@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { PageHeader, Card, message, Table, Button, Modal } from 'antd'
 import { useSelector } from 'react-redux'
-import format from 'date-fns/format'
 import { useReduxDispatch } from 'store/store'
 import { loadFinishedFeedbackResponses } from 'store/feedback/feedbackThunks'
 import { getFinishedFeedbackRequests } from 'store/feedback/feedbackSelector'
@@ -67,23 +66,6 @@ export const FeedbackList = () => {
     })()
   }, [dispatch])
 
-  let sanitizedFeedbackRequests: FeedbackListRecord[] = []
-
-  if (finishedFeedbackRequests) {
-    sanitizedFeedbackRequests = finishedFeedbackRequests.map(
-      ({
-        feedback_request: {
-          essay: { name: essayName },
-        },
-        finish_time,
-        content,
-      }) => {
-        const completedOn = format(new Date(finish_time), 'MMMM d, yyyy KK:mm aa')
-        return { essayName, completedOn, content }
-      },
-    )
-  }
-
   return (
     <>
       <PageHeader ghost={false} title="Previous Feedback" />
@@ -92,7 +74,7 @@ export const FeedbackList = () => {
       <Card style={styles.container}>
         <Table
           columns={feedbackListColumns}
-          dataSource={sanitizedFeedbackRequests}
+          dataSource={finishedFeedbackRequests}
           pagination={{ defaultPageSize: 5 }}
         />
       </Card>

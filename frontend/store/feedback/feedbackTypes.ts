@@ -8,7 +8,7 @@ export type Essay = {
 
 export type FeedbackRequest = {
   pk: number
-  essay: number
+  essay: Essay
   deadline: string
 }
 

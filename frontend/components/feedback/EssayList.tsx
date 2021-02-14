@@ -42,7 +42,10 @@ export const EssayList = ({ history }) => {
         itemLayout="horizontal"
         dataSource={feedbackRequests}
         renderItem={(item: FeedbackRequest) => {
-          const { pk: feedbackRequestPk, essay: essayPk } = item
+          const {
+            pk: feedbackRequestPk,
+            essay: { pk: essayPk },
+          } = item
           const { name } = essays[essayPk]
           const buttonDisabled = Boolean(feedbackRequestInProgress) && feedbackRequestInProgress !== feedbackRequestPk
           const canGoToFeedback = feedbackRequestInProgress === feedbackRequestPk

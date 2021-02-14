@@ -7,6 +7,7 @@ const initialState: FeedbackState = {
   essays: {},
   feedbackRequestIdInProgress: null,
   feedbackResponseInProgress: {} as FeedbackResponse,
+  finishedFeedbackRequests: [],
 }
 
 const feedbackSlice = createSlice({

@@ -1,5 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit'
 import { sortBy, values, find } from 'lodash'
+import format from 'date-fns/format'
 import { RootState } from 'store/rootReducer'
 import { FeedbackRequest, Essay } from './feedbackTypes'
 
@@ -8,7 +9,7 @@ export const getFeedbackRequests = (state: RootState) => state.feedback.feedback
 export const getEssayByFeedbackPk = (feedbackRequestPk: number) => (state: RootState) => {
   const feedbackRequest: FeedbackRequest | undefined = find(state.feedback.feedbackRequests, { pk: feedbackRequestPk })
   if (feedbackRequest) {
-    return state.feedback.essays[feedbackRequest.essay]
+    return feedbackRequest.essay
   }
   // TODO: Handle no feedback request
   return {} as Essay
@@ -18,4 +19,16 @@ export const selectOrderedFeedbackRequests = createSelector(getFeedbackRequests,
 )
 export const getFeedbackRequestIdInProgress = (state: RootState) => state.feedback.feedbackRequestIdInProgress
 export const getFeedbackResponseInProgress = (state: RootState) => state.feedback.feedbackResponseInProgress
-export const getFinishedFeedbackRequests = (state: RootState) => state.feedback.finishedFeedbackRequests
+export const getFinishedFeedbackRequests = (state: RootState) =>
+  state.feedback.finishedFeedbackRequests.map(
+    ({
+      feedback_request: {
+        essay: { name: essayName },
+      },
+      finish_time,
+      content,
+    }) => {
+      const completedOn = format(new Date(finish_time), 'MMMM d, yyyy KK:mm aa')
+      return { essayName, completedOn, content }
+    },
+  )
