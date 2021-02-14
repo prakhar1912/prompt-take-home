@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { PageHeader, Card, message, Table, Button, Modal } from 'antd'
+import React, { useEffect, useState, ChangeEvent } from 'react'
+import { PageHeader, Card, message, Table, Button, Modal, Input } from 'antd'
+import { SearchOutlined } from '@ant-design/icons'
 import { useSelector } from 'react-redux'
 import { format, isAfter, isBefore } from 'date-fns'
+import { debounce } from 'lodash'
 import { ColumnsType } from 'antd/lib/table/interface'
 import { useReduxDispatch } from 'store/store'
 import { loadFinishedFeedbackResponses } from 'store/feedback/feedbackThunks'
@@ -26,6 +28,8 @@ export const FeedbackList = () => {
   const finishedFeedbackRequests = useSelector(getFinishedFeedbackRequests)
   const [modalOpen, setModalStatus] = useState(false)
   const [modalContent, setModalContent] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [tableData, setTableData] = useState(finishedFeedbackRequests)
   const openContentModal = (content: string) => () => {
     setModalContent(content)
     setModalStatus(true)
@@ -34,6 +38,10 @@ export const FeedbackList = () => {
     setModalContent('')
     setModalStatus(false)
   }
+  const filterListBySearch = debounce((event: ChangeEvent<HTMLInputElement>) => {
+    const searchText = event.target.value
+    setSearchTerm(searchText)
+  }, 1000)
 
   const feedbackListColumns: ColumnsType<FeedbackListRecord> = [
     {
@@ -73,6 +81,18 @@ export const FeedbackList = () => {
   ]
 
   useEffect(() => {
+    if (searchTerm.length) {
+      const filteredTableData = finishedFeedbackRequests.filter(({ essayName, content }) => {
+        const searchRegEx = new RegExp(searchTerm, 'gi')
+        return searchRegEx.test(essayName) || searchRegEx.test(content)
+      })
+      setTableData(filteredTableData)
+    } else {
+      setTableData(finishedFeedbackRequests)
+    }
+  }, [searchTerm, finishedFeedbackRequests])
+
+  useEffect(() => {
     ;(async () => {
       try {
         await dispatch(loadFinishedFeedbackResponses())
@@ -85,14 +105,11 @@ export const FeedbackList = () => {
   return (
     <>
       <PageHeader ghost={false} title="Previous Feedback" />
-      {/* <Card style={styles.container}>
-      </Card> */}
       <Card style={styles.container}>
-        <Table
-          columns={feedbackListColumns}
-          dataSource={finishedFeedbackRequests}
-          pagination={{ defaultPageSize: 5 }}
-        />
+        <Input placeholder="Search Feedback..." suffix={<SearchOutlined />} onChange={filterListBySearch} />
+      </Card>
+      <Card style={styles.container}>
+        <Table columns={feedbackListColumns} dataSource={tableData} pagination={{ defaultPageSize: 5 }} />
       </Card>
       <Modal title="Submitted Feedback" visible={modalOpen} onOk={closeContentModal} onCancel={closeContentModal}>
         <p>{modalContent}</p>
