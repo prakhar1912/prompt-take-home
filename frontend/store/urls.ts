@@ -4,6 +4,7 @@ export const Urls = {
   User: () => '/api/user/',
   FeedbackRequest: () => '/api/feedback-request/',
   FeedbackView: (feedbackRequestId: number) => `/feedback/${feedbackRequestId}/view`,
+  FeedbackList: () => '/feedback/list',
   FeedbackResponse: () => '/api/feedback-response/',
   StartFeedbackResponse: (feedbackRequestId: number) => `/api/feedback-request/${feedbackRequestId}/start-response/`,
   SaveFeedbackOnEssay: (feedbackResponseId: number) => `/api/feedback-response/${feedbackResponseId}/`,

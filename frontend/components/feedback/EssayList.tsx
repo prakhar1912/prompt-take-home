@@ -1,41 +1,22 @@
-import { Card, List, message, PageHeader, Spin, Button } from 'antd'
-import React, { useEffect, useState } from 'react'
+import { Card, List, message, PageHeader, Button } from 'antd'
+import React from 'react'
 import { useSelector } from 'react-redux'
 import {
   getEssays,
   selectOrderedFeedbackRequests,
   getFeedbackRequestIdInProgress,
 } from 'store/feedback/feedbackSelector'
-import {
-  loadFeedbackRequests,
-  loadUnfinishedFeedbackResponse,
-  startFeedbackResponse,
-} from 'store/feedback/feedbackThunks'
+import { startFeedbackResponse } from 'store/feedback/feedbackThunks'
 import { FeedbackRequest } from 'store/feedback/feedbackTypes'
 import { useReduxDispatch } from 'store/store'
 import { Urls } from 'store/urls'
 
 // TODO: Define type for props
 export const EssayList = ({ history }) => {
-  const [isLoading, setIsLoading] = useState(false)
   const dispatch = useReduxDispatch()
   let feedbackRequests = useSelector(selectOrderedFeedbackRequests)
   const feedbackRequestInProgress = useSelector(getFeedbackRequestIdInProgress)
   const essays = useSelector(getEssays)
-
-  useEffect(() => {
-    ;(async () => {
-      setIsLoading(true)
-      try {
-        await dispatch(loadFeedbackRequests())
-        await dispatch(loadUnfinishedFeedbackResponse())
-        setIsLoading(false)
-      } catch (err) {
-        setIsLoading(false)
-        message.error('Failed to load essays. Please refresh this page to try again.')
-      }
-    })()
-  }, [dispatch])
 
   const goToFeedbackView = (feedbackRequestId: number) => async () => {
     if (feedbackRequestInProgress !== feedbackRequestId) {
@@ -46,21 +27,16 @@ export const EssayList = ({ history }) => {
         return message.error('Failed to start feedback response')
       }
     }
-    history.push(Urls.FeedbackView(feedbackRequestId))
+    return history.push(Urls.FeedbackView(feedbackRequestId))
   }
+
+  const goToFeedbackList = () => history.push(Urls.FeedbackList())
 
   if (feedbackRequestInProgress) {
     feedbackRequests = feedbackRequests.filter(({ pk }) => pk === feedbackRequestInProgress)
   }
 
   const renderContent = () => {
-    if (isLoading) {
-      return (
-        <Card className="center">
-          <Spin />
-        </Card>
-      )
-    }
     return (
       <List
         itemLayout="horizontal"
@@ -93,7 +69,15 @@ export const EssayList = ({ history }) => {
 
   return (
     <>
-      <PageHeader ghost={false} title="Feedback Requests" />
+      <PageHeader
+        ghost={false}
+        title="Feedback Requests"
+        extra={[
+          <Button key="go-to-feedback-list" type="primary" size="middle" onClick={goToFeedbackList}>
+            View Completed Feedback
+          </Button>,
+        ]}
+      />
       <Card>{renderContent()}</Card>
     </>
   )
