@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { PageHeader, Card, message, Table, Modal } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { PageHeader, Card, message, Table, Button, Modal } from 'antd'
 import { useSelector } from 'react-redux'
 import format from 'date-fns/format'
 import { useReduxDispatch } from 'store/store'
@@ -23,6 +23,17 @@ type FeedbackListRecord = {
 export const FeedbackList = () => {
   const dispatch = useReduxDispatch()
   const finishedFeedbackRequests = useSelector(getFinishedFeedbackRequests)
+  const [modalOpen, setModalStatus] = useState(false)
+  const [modalContent, setModalContent] = useState('')
+  const openContentModal = (content: string) => () => {
+    setModalContent(content)
+    setModalStatus(true)
+  }
+  const closeContentModal = () => {
+    setModalContent('')
+    setModalStatus(false)
+  }
+
   const feedbackListColumns = [
     {
       title: 'Essay Name',
@@ -37,7 +48,12 @@ export const FeedbackList = () => {
     {
       title: 'View Feedback',
       key: 'view-feedback',
-      render: () => <p>View</p>,
+      // eslint-disable-next-line react/display-name
+      render: ({ content }: FeedbackListRecord) => (
+        <Button type="link" onClick={openContentModal(content)}>
+          View
+        </Button>
+      ),
     },
   ]
 
@@ -74,8 +90,15 @@ export const FeedbackList = () => {
       {/* <Card style={styles.container}>
       </Card> */}
       <Card style={styles.container}>
-        <Table columns={feedbackListColumns} dataSource={sanitizedFeedbackRequests} />
+        <Table
+          columns={feedbackListColumns}
+          dataSource={sanitizedFeedbackRequests}
+          pagination={{ defaultPageSize: 5 }}
+        />
       </Card>
+      <Modal title="Submitted Feedback" visible={modalOpen} onOk={closeContentModal} onCancel={closeContentModal}>
+        <p>{modalContent}</p>
+      </Modal>
     </>
   )
 }
