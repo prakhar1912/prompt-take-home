@@ -20,7 +20,10 @@ export type FeedbackResponse = {
   finish_time: string // stores datetime at which finished
   editor: number
   content: string
-  previous_revision_feedback?: FeedbackRequest[]
+}
+
+export type FeedbackResponseWithHistory = FeedbackResponse & {
+  previous_revision_feedback: FeedbackRequest[]
 }
 
 export type FeedbackState = {
@@ -32,5 +35,6 @@ export type FeedbackState = {
   }
   feedbackRequestIdInProgress: number | null
   feedbackResponseInProgress: FeedbackResponse
+  activeFeedbackWithHistory: FeedbackResponseWithHistory
   finishedFeedbackRequests: FeedbackResponse[]
 }

@@ -8,8 +8,9 @@ import {
   removeFeedbackRequestIdFromInProgress,
   addFeedbackResponseToInProgress,
   addFinishedFeedbackResponses,
+  addActiveFeedbackWithHistory,
 } from './feedbackSlice'
-import { Essay, FeedbackRequest, FeedbackResponse } from './feedbackTypes'
+import { Essay, FeedbackRequest, FeedbackResponse, FeedbackResponseWithHistory } from './feedbackTypes'
 
 export const loadFeedbackRequests = () => async (dispatch: Dispatch) => {
   // eslint-disable-next-line no-useless-catch
@@ -49,6 +50,18 @@ export const loadFinishedFeedbackResponses = () => async (dispatch: Dispatch) =>
       params: { only_finished: true },
     })
     dispatch(addFinishedFeedbackResponses(feedbackResponses))
+  } catch (err) {
+    throw err
+  }
+}
+
+export const getActiveFeedbackResponse = (feedbackResponseId: number) => async (dispatch: Dispatch) => {
+  // eslint-disable-next-line no-useless-catch
+  try {
+    const { data: feedbackResponse }: { data: FeedbackResponseWithHistory } = await API.get(
+      Urls.ActiveFeedbackResponse(feedbackResponseId),
+    )
+    dispatch(addActiveFeedbackWithHistory(feedbackResponse))
   } catch (err) {
     throw err
   }

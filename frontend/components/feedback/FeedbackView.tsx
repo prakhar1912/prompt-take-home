@@ -1,10 +1,14 @@
-import React, { FocusEvent } from 'react'
+import React, { FocusEvent, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { PageHeader, Button, Card, Row, Col, Input, message } from 'antd'
+import { PageHeader, Button, Card, Row, Col, Input, message, Collapse } from 'antd'
 import { useReduxDispatch } from 'store/store'
-import { getEssayByFeedbackPk, getFeedbackResponseInProgress } from 'store/feedback/feedbackSelector'
-import { saveFeedbackOnEssay, submitFeedbackOnEssay } from 'store/feedback/feedbackThunks'
+import {
+  getEssayByFeedbackPk,
+  getFeedbackResponseInProgress,
+  getActiveFeedbackWithHistory,
+} from 'store/feedback/feedbackSelector'
+import { getActiveFeedbackResponse, saveFeedbackOnEssay, submitFeedbackOnEssay } from 'store/feedback/feedbackThunks'
 
 const styles = {
   feedbackContainer: {
@@ -29,6 +33,7 @@ export const FeedbackView = () => {
   const { pk: feedbackRequestPk }: { pk: string } = useParams()
   const selectedEssay = useSelector(getEssayByFeedbackPk(Number(feedbackRequestPk)))
   const feedbackResponse = useSelector(getFeedbackResponseInProgress)
+  const feedbackResponseWithHistory = useSelector(getActiveFeedbackWithHistory)
 
   const saveFeedback = async (event: FocusEvent<HTMLTextAreaElement>) => {
     const content = event.target.value
@@ -48,6 +53,18 @@ export const FeedbackView = () => {
     }
   }
 
+  useEffect(() => {
+    if (feedbackResponse.pk) {
+      ;(async () => {
+        try {
+          await dispatch(getActiveFeedbackResponse(feedbackResponse.pk))
+        } catch (err) {
+          message.error('Something went wrong while fetching feedback response')
+        }
+      })()
+    }
+  }, [dispatch, feedbackResponse])
+
   return (
     <>
       <PageHeader
@@ -59,7 +76,29 @@ export const FeedbackView = () => {
           </Button>,
         ]}
       />
-      <Card title="Previous Feedback" style={styles.feedbackContainer} />
+      {feedbackResponseWithHistory.previous_revision_feedback &&
+      feedbackResponseWithHistory.previous_revision_feedback.length ? (
+        <Card title="Previous Feedback" style={styles.feedbackContainer}>
+          <Collapse accordion>
+            {feedbackResponseWithHistory.previous_revision_feedback.map(({ essay: { name, content, pk } }) => (
+              <Collapse.Panel header={name} key={pk}>
+                <Row>
+                  <Col span={12}>
+                    <h2 style={styles.newFeedbackHeading}>Essay</h2>
+                    <p style={styles.essayContent}>{content}</p>
+                  </Col>
+                  <Col span={12}>
+                    <h2 style={styles.newFeedbackHeading}>Feedback</h2>
+                    <p></p>
+                  </Col>
+                </Row>
+              </Collapse.Panel>
+            ))}
+          </Collapse>
+        </Card>
+      ) : (
+        ''
+      )}
       <Card style={styles.feedbackContainer}>
         <Row>
           <Col span={12}>

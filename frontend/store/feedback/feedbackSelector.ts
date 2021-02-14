@@ -1,6 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit'
 import { sortBy, values, find } from 'lodash'
-import format from 'date-fns/format'
 import { RootState } from 'store/rootReducer'
 import { FeedbackRequest, Essay } from './feedbackTypes'
 
@@ -11,7 +10,6 @@ export const getEssayByFeedbackPk = (feedbackRequestPk: number) => (state: RootS
   if (feedbackRequest) {
     return feedbackRequest.essay
   }
-  // TODO: Handle no feedback request
   return {} as Essay
 }
 export const selectOrderedFeedbackRequests = createSelector(getFeedbackRequests, feedbackRequests =>
@@ -19,6 +17,7 @@ export const selectOrderedFeedbackRequests = createSelector(getFeedbackRequests,
 )
 export const getFeedbackRequestIdInProgress = (state: RootState) => state.feedback.feedbackRequestIdInProgress
 export const getFeedbackResponseInProgress = (state: RootState) => state.feedback.feedbackResponseInProgress
+export const getActiveFeedbackWithHistory = (state: RootState) => state.feedback.activeFeedbackWithHistory
 export const getFinishedFeedbackRequests = (state: RootState) =>
   state.feedback.finishedFeedbackRequests.map(
     ({
